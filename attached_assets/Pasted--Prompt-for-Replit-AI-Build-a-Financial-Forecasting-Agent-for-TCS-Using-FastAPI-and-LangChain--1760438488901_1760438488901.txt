@@ -1,0 +1,97 @@
+# Prompt for Replit AI: Build a Financial Forecasting Agent for TCS Using FastAPI and LangChain
+
+## Task Overview
+You are to build a multi-agent FastAPI backend that generates a rigorous, qualitative business outlook forecast for Tata Consultancy Services (TCS) using quarterly financial reports and earnings call transcripts (from https://www.screener.in/company/TCS/consolidated/#documents for the last 2 quarters). The agent must extract key financial metrics, analyze recurring management themes, and produce a machine-readable JSON summary foreseeing future performance and risks. All API calls and forecasts must be logged to a MySQL database. The agent should use dedicated tools for financial metric extraction, semantic transcript analysis, and (optionally) live market data retrieval.
+
+## Constraints
+- Programming Language: Python 3.10+
+- Backend: FastAPI
+- AI Stack: LangChain (RAG, tools, chains, function-calling)
+- AI Provider: OpenAI (GPT-4 Turbo or similar)
+- Database: MySQL 8.0
+- All dependencies must be listed in requirements.txt
+- A README.md must explain architecture, reasoning, tool prompts, setup, and run instructions step by step.
+
+---
+
+## Step-by-Step Instructions for Replit AI
+
+### 1. Scaffold the Project
+- Create a skeleton FastAPI app (`main.py`)
+- Add requirements.txt for: fastapi, langchain, openai, pymysql or mysql-connector-python, pydantic, requests, pdfplumber, beautifulsoup4
+
+### 2. Define Agent Tools and Chains
+**Tool 1:** `FinancialDataExtractorTool`
+- Accepts PDF/HTML of quarterly report
+- Extracts: Total Revenue, Net Profit, Operating Margin for current and previous quarter
+- Use LangChain's function-calling with a custom extraction schema
+- Add basic OCR handling for scanned PDFs if needed
+
+**Tool 2:** `QualitativeAnalysisTool`
+- Accepts transcript texts (from 2-3 quarters)
+- Uses LangChain RAG search (embeddings/vector DB) for semantic retrieval
+- Identifies: recurring management themes, sentiment, stated business outlook, risks/opportunities
+- Capture quotes and summarize top points
+
+**Tool 3 (Optional):** `MarketDataTool`
+- Fetches live TCS stock price from public API (Yahoo Finance, Alpha Vantage, etc.)
+
+### 3. Chain Tools for Forecast Endpoint
+- Master agent workflow: Download documents, run extractors, synthesize findings, and output JSON:
+    ```
+    {
+      "financial_trends": {...},
+      "qualitative_summary": {...},
+      "risks_opportunities": [...],
+      "forward_outlook": "...",
+      "market_data": {...}
+    }
+    ```
+
+### 4. FastAPI Endpoints and Database Logging
+- `/forecast` endpoint: triggers document download, tool chaining, returns structured JSON
+- Log incoming request + full forecast in MySQL (`logs` table)
+- Add DB config to settings.py or env
+
+### 5. README.md Documentation
+- Explain agent architecture: tools, chains, prompt orchestration
+- Describe each tool's schema and master system prompt
+- Give clear setup: Python version, pip install, MySQL config
+- Give run command: `uvicorn main:app --reload`
+- Clarify any required API keys or credentials
+
+### 6. Evaluation and Guardrails
+- Master system prompt must specify grounding in source documents ("never hallucinate values; always cite directly or summarize from underlying files")
+- Add error handling (missing docs, parse failures, DB connection issues)
+- Document prompt retries and validation strategy
+
+---
+
+## OUTPUT: Directory Structure
+
+- `main.py` (FastAPI entrypoint)
+- `agents/` (separate agent/tool logic: financial_extractor.py, transcript_analyst.py, market_data.py)
+- `db.py` (DB connection/logging helper)
+- `requirements.txt` (dependencies)
+- `README.md` (detailed instructions and design explanation)
+
+---
+
+## EXAMPLES: SYSTEM PROMPTS FOR THE AGENT
+
+### FinancialDataExtractorTool
+> "Extract total revenue, net profit, and operating margin from the provided quarterly report. Return only explicit values and periods as per the document tables. Do not guess—cite values as stated."
+
+### QualitativeAnalysisTool
+> "Perform a semantic analysis across the provided transcripts. Summarize management’s outlook, risks, and recurring business themes for future quarters. Extract direct quotes for sentiment and strategic direction."
+
+---
+
+## INSTRUCTIONS TO REPLIT AI
+
+Build out each file per the architecture and requirements above. Do not skip DB logging, structured JSON output, or README explanations. For tool prompts, use grounding and avoidance of hallucinations. Make sure the resulting repo is modular, clean, and easy for any engineer to set up and run.
+
+---
+
+# Please begin by scaffolding the codebase as above, prioritizing agent logic, tool extraction, robust function-calling, and clear documentation. Output a full README.md when done.
+

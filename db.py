@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 def get_db_connection():
     """Get PostgreSQL database connection"""
-    database_url = os.getenv("DATABASE_URL")
+    database_url = "postgresql://postgres:Punzuri!1234@db.zcekdhjiltyxagbziwge.supabase.co:5432/postgres"
     if not database_url:
         raise Exception("DATABASE_URL environment variable not set")
     
